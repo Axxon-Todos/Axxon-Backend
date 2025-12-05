@@ -1,36 +1,29 @@
-use sea_orm::entity::*;
-use sea_orm::DatabaseConnection;
-use sea_orm::ActiveModelTrait;
-use sea_orm::Set;
+use sea_orm::{
+    prelude::*,
+    ActiveModelTrait, DatabaseTransaction, EntityTrait, Set,
+};
+use chrono::Utc;
+use error_enums::db_errors::DbErrors;
+use data_structs::model_structs::board::CreateBoardData;
 
 pub struct BoardModel; 
 
 impl BoardModel {
-
-    pub async fn create_board(
-        db: &DatabaseConnection,
-        name: &str,
-        created_by: i32,
-        member_emails: Option<Vec<String>>,
-    ) -> Result<board::Model, sea_orm::DbErr> {
-        // Step 1: Build the ActiveModel
+    //TODO: Add default categories to board creation method
+    pub async fn create_board(db: &DatabaseConnection, creator_data: CreateBoardData,) -> Result<board::Model, DbErrors> {
+        // Build ActiveModel
         let new_board = board::ActiveModel {
-            name: Set(name.to_owned()),
-            created_by: Set(created_by),
-            created_at: Set(chrono::Utc::now().naive_utc()),
-            updated_at: Set(chrono::Utc::now().naive_utc()),
-            ..Default::default() // auto-fill optional fields like id
+            name: Set(creator_data.name.clone()),
+            created_by: Set(creator_data.created_by),
+            created_at: Set(Utc::now().naive_utc()),
+            updated_at: Set(Utc::now().naive_utc()),
+            ..Default::default() // fills id etc.
         };
     
-        // Step 2: Insert into DB
+        // Insert into DB
         let board = new_board.insert(db).await?;
     
-        // Step 3: Return the inserted board
-        Ok(board)
-    }
-
-    pub async fn create_board(&self, board: Board) -> Result<Board, Error> {
-        let board = Board::create(board).exec(db).await?;
+        // Return the inserted board
         Ok(board)
     }
 
