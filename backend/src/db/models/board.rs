@@ -1,11 +1,21 @@
-use sea_orm::{prelude::*, ActiveModelTrait, DatabaseTransaction, EntityTrait, Set};
+use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait, TransactionTrait, Set};
 use chrono::Utc;
-use error_enums::db_errors::DbErrors;
-use data_structs::model_structs::board::CreateBoardData;
+
+// error handler enum
+use crate::error_enums::db_errors::DbErrors;
+
+//input typesafety structs
+use crate::data_structs::model_structs::board::{
+    CreateBoardData, 
+};
+
+//db entity imports
+use crate::db::entities::{boards, categories};
+
 
 pub struct BoardModel{
     pub db: DatabaseConnection,
-}; 
+}
 
  impl BoardModel {
 
@@ -50,7 +60,7 @@ pub struct BoardModel{
             // insert default categories into database as batch insert
         categories::Entity::insert_many(category_models) // insert many does automatic batch inserts
             .exec(&txn)
-            .await?
+            .await?;
 
         txn.commit().await?;
 

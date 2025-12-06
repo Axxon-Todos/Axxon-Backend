@@ -1,8 +1,11 @@
-pub mod database;
+pub mod db;
+pub mod config;
+pub mod data_structs;
+mod error_enums;
 
-
-use db::models::BoardModel;
+use db::models::board::BoardModel;
 use data_structs::model_structs::board::CreateBoardData;
+use config::database;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -22,5 +25,5 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Created board with id: {}", new_board.id);
 
-    Ok(())
+    Ok("Board Creation successful!")
 }
