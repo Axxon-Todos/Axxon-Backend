@@ -1,5 +1,6 @@
-pub struct createBoardData {
-    db: &DatabaseConnection,
-    name: &str,
-    created_by: i32
+
+
+pub struct CreateBoardData {
+    pub name: String,
+    pub created_by: i32,
 }
