@@ -7,6 +7,7 @@ use db::models::board::BoardModel;
 use data_structs::model_structs::board::CreateBoardData;
 use config::database;
 
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Connect to the DB
