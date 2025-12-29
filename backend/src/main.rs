@@ -26,5 +26,5 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Created board with id: {}", new_board.id);
 
-    Ok("Board Creation successful!")
+    Ok(())
 }

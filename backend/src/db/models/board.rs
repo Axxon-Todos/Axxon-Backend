@@ -1,5 +1,5 @@
 use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait, TransactionTrait, Set};
-use chrono::Utc;
+use chrono::{Utc};
 
 // error handler enum
 use crate::error_enums::db_errors::DbErrors;
@@ -19,16 +19,19 @@ pub struct BoardModel{
 
  impl BoardModel {
 
-    pub async fn create_board(&self, creator_data: CreateBoardData,) -> Result<board::Model, DbErrors> {
+    pub async fn create_board(&self, creator_data: CreateBoardData,) -> Result<boards::Model, DbErrors> {
         //start transaction to improve atomicity
         let txn = self.db.begin().await?;
+        
+        //set current time
+        let now = Utc::now().fixed_offset();
 
         // Build ActiveModel
         let new_board = boards::ActiveModel {
             name: Set(creator_data.name),
             created_by: Set(creator_data.created_by),
-            created_at: Set(Utc::now().naive_utc()),
-            updated_at: Set(Utc::now().naive_utc()),
+            created_at: Set(Some(now)),
+            updated_at: Set(Some(now)),
             ..Default::default() // fills id etc.
         };
     
@@ -52,7 +55,7 @@ pub struct BoardModel{
                 name: Set(name.to_string()),
                 color: Set(color.to_string()),
                 position: Set(position as i32),
-                is_done: Set(*is_done),
+                is_done: Set(Some(*is_done)),
                 ..Default::default()
             })
             .collect(); 
